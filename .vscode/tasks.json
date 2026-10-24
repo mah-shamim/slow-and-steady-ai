@@ -1,0 +1,145 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Slow and Steady AI suite",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"compose",
+				"up",
+				"-d",
+				"--build"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check Compose services",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"compose",
+				"ps",
+				"-a"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Validate unified Compose setup",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"compose",
+				"config",
+				"--quiet"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Run unified application",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"compose",
+				"up",
+				"-d",
+				"--build"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check unified app health",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"compose",
+				"exec",
+				"-T",
+				"lazymate",
+				"python",
+				"-c",
+				"import urllib.request; print(urllib.request.urlopen('http://gateway/api/health').read().decode())"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check SellerMate API route",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"compose",
+				"exec",
+				"-T",
+				"sellermate-ai",
+				"python",
+				"-c",
+				"import urllib.request; print(urllib.request.urlopen('http://gateway/sellermate-api/health').read().decode())"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check shared address",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"compose",
+				"exec",
+				"-T",
+				"gateway",
+				"nginx",
+				"-t"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check unified app services",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"compose",
+				"ps",
+				"-a"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Probe SellerMate upstream",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"compose",
+				"exec",
+				"-T",
+				"gateway",
+				"wget",
+				"-S",
+				"-O",
+				"-",
+				"http://sellermate-web:80/"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Inspect gateway logs",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"compose",
+				"logs",
+				"--tail=30",
+				"gateway"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

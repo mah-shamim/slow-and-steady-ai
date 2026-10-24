@@ -1,0 +1,36 @@
+services:
+  app:
+    build: .
+    container_name: lazymate-app
+    ports:
+      - "127.0.0.1:8080:8000"
+    environment:
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:3b}
+      MAX_TEXT_CHARS: 30000
+      RATE_LIMIT_REQUESTS: 30
+      RATE_LIMIT_WINDOW_SECONDS: 60
+    volumes:
+      - ./workspace:/workspace
+    depends_on:
+      ollama:
+        condition: service_started
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,noexec,nosuid
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+    restart: unless-stopped
+  ollama:
+    image: ollama/ollama:0.6.2
+    container_name: lazymate-ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    expose:
+      - "11434"
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+volumes:
+  ollama_data:

@@ -1,0 +1,31 @@
+services:
+  web:
+    build: ./app
+    ports:
+      - "8080:80"
+    depends_on:
+      - ai
+    restart: unless-stopped
+
+  ai:
+    build: ./ai_service
+    environment:
+      OLLAMA_URL: http://ollama:11434
+      MODEL_NAME: ${MODEL_NAME:-qwen2.5:3b}
+      ALLOWED_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:0.6.2
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "127.0.0.1:11434:11434"
+    restart: unless-stopped
+
+volumes:
+  ollama_data:

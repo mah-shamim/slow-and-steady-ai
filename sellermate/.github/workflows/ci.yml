@@ -1,0 +1,20 @@
+name: SellerMate CI
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: ai_service/requirements-dev.txt
+      - name: Install test dependencies
+        run: pip install -r ai_service/requirements-dev.txt
+      - name: Run API tests
+        run: cd ai_service && python -m pytest -q
+      - name: Repository smoke check
+        run: bash tests/smoke.sh
